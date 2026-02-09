@@ -18,7 +18,7 @@ An automated **Feedback Agent** built in **n8n** that processes customer reviews
 
 **Watch the full walkthrough:**  
 🎥 Demo Video  
-[Watch the full walkthrough](https://new.express.adobe.com/id/urn:aaid:sc:US:869415ef-76a3-4f4c-b248-3bc9b90ae966)
+[Watch the full walkthrough]([https://new.express.adobe.com/publishedV2/urn:aaid:sc:US:ccb61e20-8f9a-4fe9-aaa4-5472d4cd0c7a?promoid=Y69SGM5H&mv=other])
 
 
 ---
