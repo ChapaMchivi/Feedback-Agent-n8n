@@ -1,5 +1,5 @@
 {
-  "name": "Daily Bean Feedback Agent",
+  "name": "Feedback Agent",
   "nodes": [
     {
       "parameters": {
@@ -14,7 +14,7 @@
           "__rl": true,
           "value": "1bINtcp65W8CYVnnirnkOSuJpkXIeJHVHZfu231O_z3E",
           "mode": "list",
-          "cachedResultName": "Daily Bean Feedback ",
+          "cachedResultName": "Feedback Agent ",
           "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1bINtcp65W8CYVnnirnkOSuJpkXIeJHVHZfu231O_z3E/edit?usp=drivesdk"
         },
         "sheetName": {
@@ -88,7 +88,7 @@
     {
       "parameters": {
         "promptType": "define",
-        "text": "=Task:\nAnalyze the customer’s feedback and determine (1) its category and (2) the relevant business area (Daily Bean Cafe).\n\nInput:\nFeedback: {{ $json.Feedback }}\n\nValid Categories:\n- question\n- problem\n- suggestion\n- other\n- unknown, if the feedback is missing, empty, irrelevant, or cannot be interpreted\n\nValid Areas:\n- kitchen\n- delivery\n- service\n- other\n- unknown, if the feedback is missing, empty, irrelevant, or cannot be interpreted\n\nInstructions:\n- NEVER create new labels, If unsure → set \"other\"\n- First validate that the feedback text is meaningful (not empty, null, too short to interpret, or containing only non-informative content).\n- If feedback is valid, classify it into one category and one area from the provided lists.\n- If classification is not possible, use the fallback \"unknown\" for the unassignable part(s).\n- Base your decision strictly on the content of the feedback.\n",
+        "text": "=Task:\nAnalyze the customer’s feedback and determine (1) its category and (2) the relevant business area (Feedback Agent).\n\nInput:\nFeedback: {{ $json.Feedback }}\n\nValid Categories:\n- question\n- problem\n- suggestion\n- other\n- unknown, if the feedback is missing, empty, irrelevant, or cannot be interpreted\n\nValid Areas:\n- kitchen\n- delivery\n- service\n- other\n- unknown, if the feedback is missing, empty, irrelevant, or cannot be interpreted\n\nInstructions:\n- NEVER create new labels, If unsure → set \"other\"\n- First validate that the feedback text is meaningful (not empty, null, too short to interpret, or containing only non-informative content).\n- If feedback is valid, classify it into one category and one area from the provided lists.\n- If classification is not possible, use the fallback \"unknown\" for the unassignable part(s).\n- Base your decision strictly on the content of the feedback.\n",
         "hasOutputParser": true,
         "options": {}
       },
@@ -169,7 +169,7 @@
           "__rl": true,
           "value": "1bINtcp65W8CYVnnirnkOSuJpkXIeJHVHZfu231O_z3E",
           "mode": "list",
-          "cachedResultName": "Daily Bean Feedback ",
+          "cachedResultName": "Feedback Agent",
           "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1bINtcp65W8CYVnnirnkOSuJpkXIeJHVHZfu231O_z3E/edit?usp=drivesdk"
         },
         "sheetName": {
@@ -373,7 +373,7 @@
   "versionId": "9289efa6-ab3e-4d48-8762-1298f7840f59",
   "meta": {
     "templateCredsSetupCompleted": true,
-    "instanceId": "-------------88a52e8f403984e4f52343279213b8a7d31b3d3c2022a9c525b1ffbd1e1"
+    "instanceId": "----------------------------------------------------------ffbd1e1"
   },
   "id": "sG-j0eZdM0NZxbfH1J4nH",
   "tags": []
