@@ -1,0 +1,380 @@
+{
+  "name": "Daily Bean Feedback Agent",
+  "nodes": [
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "documentId": {
+          "__rl": true,
+          "value": "1bINtcp65W8CYVnnirnkOSuJpkXIeJHVHZfu231O_z3E",
+          "mode": "list",
+          "cachedResultName": "Daily Bean Feedback ",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1bINtcp65W8CYVnnirnkOSuJpkXIeJHVHZfu231O_z3E/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1701422629,
+          "mode": "list",
+          "cachedResultName": "Test Data - convert",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1bINtcp65W8CYVnnirnkOSuJpkXIeJHVHZfu231O_z3E/edit#gid=1701422629"
+        },
+        "event": "rowAdded",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "69efc908-d341-4830-9ba4-8fc1cbc784d2",
+      "name": "Google Sheets Trigger",
+      "credentials": {
+        "googleSheetsTriggerOAuth2Api": {
+          "id": "9r9dG7fDrnCd2icR",
+          "name": "Google Sheets Trigger account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "6c1a169c-98d2-4197-8c48-95eb7c795849",
+              "name": "Name",
+              "value": "={{ $json.Name }}",
+              "type": "string"
+            },
+            {
+              "id": "9d5e0ccf-2d7a-4153-a2eb-6141258403a1",
+              "name": "Contact",
+              "value": "={{ $json.Contact }}",
+              "type": "string"
+            },
+            {
+              "id": "b4abc5a3-aecf-4ac0-82dc-ebb8a1c31c0f",
+              "name": "Feedback",
+              "value": "={{ $json.Feedback }}",
+              "type": "string"
+            },
+            {
+              "id": "7c768412-cf9f-4ce7-9f5f-e896fd259c7e",
+              "name": "Timestamp",
+              "value": "={{ $json.Timestamp }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {
+          "ignoreConversionErrors": true
+        }
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        208,
+        0
+      ],
+      "id": "406ab7fc-4efe-493d-837e-a49472f4e19d",
+      "name": "Extract Data"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Task:\nAnalyze the customer’s feedback and determine (1) its category and (2) the relevant business area (Daily Bean Cafe).\n\nInput:\nFeedback: {{ $json.Feedback }}\n\nValid Categories:\n- question\n- problem\n- suggestion\n- other\n- unknown, if the feedback is missing, empty, irrelevant, or cannot be interpreted\n\nValid Areas:\n- kitchen\n- delivery\n- service\n- other\n- unknown, if the feedback is missing, empty, irrelevant, or cannot be interpreted\n\nInstructions:\n- NEVER create new labels, If unsure → set \"other\"\n- First validate that the feedback text is meaningful (not empty, null, too short to interpret, or containing only non-informative content).\n- If feedback is valid, classify it into one category and one area from the provided lists.\n- If classification is not possible, use the fallback \"unknown\" for the unassignable part(s).\n- Base your decision strictly on the content of the feedback.\n",
+        "hasOutputParser": true,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        416,
+        0
+      ],
+      "id": "af06a070-58ad-4863-a555-63482115eb0c",
+      "name": "AI Categorization"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        272,
+        208
+      ],
+      "id": "07fa4a5d-48b2-440a-9f87-81eadc6104cc",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "XKNRdGl2bg6uRzQy",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "{\n\"category\": \"question\",\n\"area\": \"kitchen\"\n}\n"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.3,
+      "position": [
+        592,
+        208
+      ],
+      "id": "9fb73021-eaa9-4383-a9e6-4f707fd5ece5",
+      "name": "Structured Output Parser"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "e1cb9777-b349-447f-b7d5-7948e5a71d99",
+              "name": "=category",
+              "value": "={{ $json.output.category.toLowerCase() }}",
+              "type": "string"
+            },
+            {
+              "id": "065957b3-6a4e-47d7-81d3-66efeb90a178",
+              "name": "=area",
+              "value": "={{ $json.output.area.toLowerCase() }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        768,
+        0
+      ],
+      "id": "70aaf13d-c6b0-4020-95b6-77c20b5478ab",
+      "name": "Normalized labels"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1bINtcp65W8CYVnnirnkOSuJpkXIeJHVHZfu231O_z3E",
+          "mode": "list",
+          "cachedResultName": "Daily Bean Feedback ",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1bINtcp65W8CYVnnirnkOSuJpkXIeJHVHZfu231O_z3E/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1701422629,
+          "mode": "list",
+          "cachedResultName": "Test Data - convert",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1bINtcp65W8CYVnnirnkOSuJpkXIeJHVHZfu231O_z3E/edit#gid=1701422629"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "ID": "={{ $('Google Sheets Trigger').item.json.ID }}",
+            "Category": "={{ $json.category }}",
+            "Area": "={{ $json.area }}"
+          },
+          "matchingColumns": [
+            "ID"
+          ],
+          "schema": [
+            {
+              "id": "ID",
+              "displayName": "ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Timestamp",
+              "displayName": "Timestamp",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Name",
+              "displayName": "Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Contact",
+              "displayName": "Contact",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Feedback",
+              "displayName": "Feedback",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Category",
+              "displayName": "Category",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Area",
+              "displayName": "Area",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Responsible",
+              "displayName": "Responsible",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        976,
+        0
+      ],
+      "id": "5cc41dcb-34eb-4403-9129-2c77c561a310",
+      "name": "Update feedback row",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "9tRu9Dd54yMQ10H8",
+          "name": "Google Sheets account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Google Sheets Trigger": {
+      "main": [
+        [
+          {
+            "node": "Extract Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract Data": {
+      "main": [
+        [
+          {
+            "node": "AI Categorization",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Categorization",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "AI Categorization",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Categorization": {
+      "main": [
+        [
+          {
+            "node": "Normalized labels",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Normalized labels": {
+      "main": [
+        [
+          {
+            "node": "Update feedback row",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": false
+  },
+  "versionId": "9289efa6-ab3e-4d48-8762-1298f7840f59",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "-------------88a52e8f403984e4f52343279213b8a7d31b3d3c2022a9c525b1ffbd1e1"
+  },
+  "id": "sG-j0eZdM0NZxbfH1J4nH",
+  "tags": []
+}

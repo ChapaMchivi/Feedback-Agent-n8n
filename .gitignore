@@ -1,0 +1,38 @@
+# -----------------------------
+# n8n & Project Safety
+# -----------------------------
+
+# Environment variables (API keys, emails, secrets)
+.env
+.env.*
+*.env
+
+# n8n credential exports (never commit these)
+.credentials
+*.credentials
+
+# Local n8n data folder (contains secrets)
+.n8n/
+
+# -----------------------------
+# Node / Dependency Noise
+# -----------------------------
+node_modules/
+package-lock.json
+npm-debug.log*
+
+# -----------------------------
+# OS / Editor Files
+# -----------------------------
+.DS_Store
+Thumbs.db
+
+# VS Code
+.vscode/
+*.code-workspace
+
+# -----------------------------
+# Logs
+# -----------------------------
+*.log
+logs/
