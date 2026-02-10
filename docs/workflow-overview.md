@@ -28,37 +28,6 @@ The workflow follows this sequence:
 
 ---
 
-## **Workflow Diagram (Mermaid)**  
-```mermaid
-flowchart TD
-    A[Google Sheets Trigger - New Row Added]
-    B[Extract Data (Set Node)]
-    C[AI Categorization (Gemini + LangChain Agent)]
-    D[Structured Output Parser]
-    E[Normalize Labels (Set Node)]
-    F[Update Row in Google Sheets]
-    G{Category or Area Unknown?}
-    H[Stop Workflow]
-    I[Switch: Route by Area]
-    J[Send Email - Kitchen Team]
-    K[Send Email - Delivery Team]
-    L[Send Email - Service Team]
-    M[Send Email - Fallback Team]
-    A --> B
-    B --> C
-    C --> D
-    D --> E
-    E --> F
-    F --> G
-    G -- Yes --> H
-    G -- No --> I
-    I -- kitchen --> J
-    I -- delivery --> K
-    I -- service --> L
-    I -- other/unknown --> M
-
-```
-
 ## **Node‑by‑Node Breakdown**
 
 ### **1. Google Sheets Trigger**
