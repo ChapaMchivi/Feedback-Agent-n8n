@@ -29,8 +29,6 @@ The workflow follows this sequence:
 ---
 
 ## **Workflow Diagram (Mermaid)**  
-*(GitHub‑safe, no HTML, no colors)*
-
 ```mermaid
 flowchart TD
 
