@@ -1,4 +1,9 @@
+---
+
+# **workflow-overview.md**  
 ### *Technical Documentation for the Feedback Agent (n8n Workflow)*
+
+---
 
 ## **Overview**
 
@@ -11,37 +16,39 @@ This document provides a **technical, node‑by‑node breakdown** of the workfl
 
 ## **High‑Level Architecture**
 
+The workflow follows this sequence:
+
+1. Detect new feedback in Google Sheets  
+2. Extract and structure the data  
+3. Classify the feedback using Gemini  
+4. Normalize the AI output  
+5. Update the original row  
+6. Route the feedback to the correct team  
+7. Send automated email notifications  
+
 ---
 
-# **Color‑Coded Mermaid Diagram**
+## **Workflow Diagram (Mermaid)**  
+*(GitHub‑safe, no HTML, no colors)*
 
 ```mermaid
-
 flowchart TD
 
-    %% ============================
-    %% NODES
-    %% ============================
+    A[Google Sheets Trigger - New Row Added]
+    B[Extract Data (Set Node)]
+    C[AI Categorization (Gemini + LangChain Agent)]
+    D[Structured Output Parser]
+    E[Normalize Labels (Set Node)]
+    F[Update Row in Google Sheets]
 
-    A[Google Sheets Trigger<br/>New Row Added]:::trigger
-    B[Extract Data<br/>(Set Node)]:::process
-    C[AI Categorization<br/>(Gemini + LangChain Agent)]:::ai
-    D[Structured Output Parser]:::ai
-    E[Normalize Labels<br/>(Set Node)]:::process
-    F[Update Row in Google Sheets]:::update
+    G{Category or Area Unknown?}
+    H[Stop Workflow]
+    I[Switch: Route by Area]
 
-    G{Category or Area Unknown?}:::decision
-    H[Stop Workflow]:::stop
-    I[Switch: Route by Area]:::decision
-
-    J[Send Email<br/>Kitchen Team]:::email
-    K[Send Email<br/>Delivery Team]:::email
-    L[Send Email<br/>Service Team]:::email
-    M[Send Email<br/>Fallback Team]:::email
-
-    %% ============================
-    %% FLOWS
-    %% ============================
+    J[Send Email - Kitchen Team]
+    K[Send Email - Delivery Team]
+    L[Send Email - Service Team]
+    M[Send Email - Fallback Team]
 
     A --> B
     B --> C
@@ -57,18 +64,8 @@ flowchart TD
     I -- delivery --> K
     I -- service --> L
     I -- other/unknown --> M
+```
 
-    %% ============================
-    %% STYLES
-    %% ============================
-
-    classDef trigger fill:#FDE68A,stroke:#CA8A04,stroke-width:2px,color:#000
-    classDef process fill:#BFDBFE,stroke:#1D4ED8,stroke-width:2px,color:#000
-    classDef ai fill:#FBCFE8,stroke:#DB2777,stroke-width:2px,color:#000
-    classDef update fill:#BBF7D0,stroke:#15803D,stroke-width:2px,color:#000
-    classDef decision fill:#FECACA,stroke:#DC2626,stroke-width:2px,color:#000
-    classDef email fill:#DDD6FE,stroke:#6D28D9,stroke-width:2px,color:#000
-    classDef stop fill:#E5E7EB,stroke:#374151,stroke-width:2px,color:#000
 ---
 
 ## **Node‑by‑Node Breakdown**
@@ -77,10 +74,10 @@ flowchart TD
 **Type:** Google Sheets Trigger  
 **Purpose:** Detects new feedback entries added to the sheet.
 
-**Key configuration:**
+**Configuration:**
 - Event: `rowAdded`
-- Polling: every minute
-- Inputs captured:
+- Polling interval: every minute  
+- Captured fields:
   - ID  
   - Timestamp  
   - Name  
@@ -93,15 +90,15 @@ This node initiates the workflow whenever a new row appears.
 
 ### **2. Extract Data (Set Node)**
 **Type:** Set  
-**Purpose:** Cleanly map incoming Google Sheets fields into structured JSON.
+**Purpose:** Map incoming Google Sheets fields into clean JSON.
 
-**Fields extracted:**
+**Extracted fields:**
 - `Name`
 - `Contact`
 - `Feedback`
 - `Timestamp`
 
-This ensures downstream nodes receive clean, predictable data.
+This ensures downstream nodes receive predictable, structured data.
 
 ---
 
@@ -124,10 +121,10 @@ This ensures downstream nodes receive clean, predictable data.
   - unknown  
 
 **Prompt includes:**
-- Validation rules  
-- Fallback behavior  
 - Strict label enforcement  
 - No new labels allowed  
+- Fallback behavior  
+- Validation rules  
 
 This node uses **Google Gemini** to interpret the feedback text and produce structured JSON.
 
@@ -137,7 +134,7 @@ This node uses **Google Gemini** to interpret the feedback text and produce stru
 **Type:** LangChain Structured Output Parser  
 **Purpose:** Enforce predictable JSON output.
 
-**Schema example:**
+**Example schema:**
 ```json
 {
   "category": "question",
@@ -145,14 +142,14 @@ This node uses **Google Gemini** to interpret the feedback text and produce stru
 }
 ```
 
-This guarantees the AI output is machine‑readable and safe for routing.
+This ensures the AI output is machine‑readable and safe for routing.
 
 ---
 
 ### **5. Normalize Labels (Set Node)**
 **Purpose:** Convert AI output to lowercase for consistency.
 
-**Example:**
+Examples:
 - `"Kitchen"` → `"kitchen"`
 - `"Unknown"` → `"unknown"`
 
@@ -173,13 +170,15 @@ This ensures the sheet becomes the single source of truth.
 
 ---
 
-## 🔀 **Routing Logic**
+## **Routing Logic**
 
 ### **7. If Node — Check for Unknowns**
 **Purpose:** Detect whether category or area is `"unknown"`.
 
-If either is unknown → skip routing and end workflow.  
-If both are valid → continue to Switch node.
+- If **yes** → stop workflow  
+- If **no** → continue to Switch node  
+
+This prevents misrouted or incomplete feedback.
 
 ---
 
@@ -198,7 +197,7 @@ This ensures each team receives only the feedback relevant to them.
 
 ## **Email Notification Nodes**
 
-Each Gmail node sends a formatted message to the team email address stored in an environment variable (recommended):
+Each Gmail node sends a formatted message to the team email address stored in an environment variable:
 
 ```
 ={{ $env.FEEDBACK_EMAIL }}
@@ -216,9 +215,7 @@ This creates a clean, automated alert system for internal teams.
 
 ## **Security & Environment Variables**
 
-To keep the workflow safe for GitHub:
-
-Use environment variables for sensitive values:
+To keep the workflow safe for GitHub, use environment variables:
 
 ```
 FEEDBACK_EMAIL
@@ -258,7 +255,8 @@ Feedback-Agent-n8n/
 ├── workflows/
 │   └── feedback agent.json
 ├── README.md
-└── workflow-overview.md
+└── docs/
+    └── workflow-overview.md
 ```
 
 ---
