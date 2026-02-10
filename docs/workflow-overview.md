@@ -16,6 +16,7 @@ This document provides a **technical, node‑by‑node breakdown** of the workfl
 # **Color‑Coded Mermaid Diagram**
 
 ```mermaid
+
 flowchart TD
 
     %% ============================
@@ -68,34 +69,6 @@ flowchart TD
     classDef decision fill:#FECACA,stroke:#DC2626,stroke-width:2px,color:#000
     classDef email fill:#DDD6FE,stroke:#6D28D9,stroke-width:2px,color:#000
     classDef stop fill:#E5E7EB,stroke:#374151,stroke-width:2px,color:#000
-
-```
-
-# What the colors represent
-
-| Stage | Color | Meaning |
-|-------|--------|---------|
-| Trigger | Yellow | Workflow start |
-| Processing nodes | Blue | Data extraction + normalization |
-| AI nodes | Pink | Gemini + LangChain logic |
-| Sheet update | Green | Writes back to Google Sheets |
-| Decision logic | Red | Routing conditions |
-| Email notifications | Purple | Team‑specific outputs |
-| Stop node | Gray | Workflow termination |
-
-
----
-
-If you want, I can also create:
-
-- a **dark‑mode version**  
-- a **compact horizontal layout**  
-- a **Mermaid sequence diagram**  
-- a **diagram that matches your brand colors**  
-
-Just tell me the vibe you want.
-```
-
 ---
 
 ## **Node‑by‑Node Breakdown**
