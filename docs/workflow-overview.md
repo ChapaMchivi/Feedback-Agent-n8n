@@ -56,9 +56,8 @@ flowchart TD
     I -- delivery --> K
     I -- service --> L
     I -- other/unknown --> M
-```
 
----
+```
 
 ## **Node‑by‑Node Breakdown**
 
