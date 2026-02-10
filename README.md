@@ -1,6 +1,6 @@
-# **Feedback Agent (n8n Workflow)**
-
 An automated **Feedback Agent** built in **n8n** that processes customer reviews submitted through a QR‑code form. The workflow reads each new entry from Google Sheets, analyzes it with Google Gemini, and routes it to the correct team automatically — turning raw feedback into structured, actionable insights.
+
+---
 
 ## Badges
 
